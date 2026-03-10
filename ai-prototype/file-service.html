@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>File Service • TeamFlow</title>
+
+  <!-- Font Awesome 6 kit (for theme toggle icon) -->
+  <script src="https://kit.fontawesome.com/0b420d52a0.js" crossorigin="anonymous"></script>
+
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-dark: #4f46e5;
+      --dark: #0f172a;
+      --gray: #64748b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+      --bg: var(--light);
+      --text: var(--dark);
+      --card-bg: white;
+      --header-bg: white;
+      --sidebar-bg: var(--card-bg);
+      --muted: #94a3b8;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --text: #e2e8f0;
+      --card-bg: #1e293b;
+      --header-bg: #1e293b;
+      --border: #334155;
+      --sidebar-bg: #1e293b;
+      --muted: #94a3b8;
+      --light: #0f172a;
+      --dark: #e2e8f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      max-height: 100vh;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 70px;
+      background: var(--header-bg);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      padding: 0 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.4s ease;
+    }
+
+    .logo {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+      gap: 2rem;
+    }
+
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    /* Theme Toggle */
+    #theme-toggle {
+      width: 38px;
+      height: 38px;
+      background: transparent;
+      color: gold;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      margin-left: 1.8rem;
+    }
+
+    #theme-toggle:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--primary);
+    }
+
+    .container {
+      display: flex;
+      margin-top: 70px;
+      min-height: calc(100vh - 70px);
+    }
+
+    aside {
+      width: 280px;
+      background: var(--sidebar-bg);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1.5rem 0;
+      flex-shrink: 0;
+      transition: all 0.4s ease;
+    }
+
+    main {
+      flex: 1;
+      padding: 2.5rem 3rem;
+      overflow-y: auto;
+    }
+
+    .breadcrumb {
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .breadcrumb a {
+      color: var(--primary);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb span {
+      margin: 0 0.5rem;
+      color: var(--muted);
+    }
+
+    h1 {
+      font-size: 2.1rem;
+      margin-bottom: 0.8rem;
+      color: var(--text);
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.22s;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      background: rgba(99, 102, 241, 0.08);
+      border-color: var(--primary);
+    }
+
+    /* Tree / File Explorer styling */
+    .tree details {
+      margin: 0.2rem 0;
+    }
+
+    /* Shared row style — applies to both summary and .item */
+    .tree summary,
+    .tree .item {
+      list-style: none;
+      padding: 0.6rem 0.8rem 0.6rem 0.5rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background 0.18s, color 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      user-select: none;
+      font-size: 0.92rem;
+    }
+
+    .tree summary::-webkit-details-marker { display: none; }
+
+    /* Hover — full row */
+    .tree summary:hover,
+    .tree .item:hover {
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    /* Active — full row */
+    .tree .item.active,
+    .tree summary.active {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* Shared chevron arrow style */
+    .tree .arrow,
+    .tree .folder-arrow {
+      font-size: 0.7rem;
+      color: var(--muted);
+      transition: transform 0.25s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.2rem;
+      height: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    /* Rotate on open */
+    details[open] > summary .arrow,
+    .tree .item.folder.expanded .folder-arrow {
+      transform: rotate(90deg);
+    }
+
+    /* summary-text is now just a transparent pass-through label */
+    .tree summary .summary-text {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .tree ul {
+      list-style: none;
+      padding-left: 1.6rem;
+      margin: 0.15rem 0;
+    }
+
+    /* Nested folder content indentation (matches .tree ul) */
+    .tree .folder-content {
+      display: none;
+      list-style: none;
+      padding-left: 1.6rem;
+      margin: 0.15rem 0;
+    }
+
+    .tree .folder-content.show {
+      display: block;
+    }
+
+    /* File items — no arrow, so nudge left to align text with folder text */
+    .tree .item.file {
+      padding-left: 2.17rem; /* arrow-width (1.2rem) + gap (0.45rem) + 0.52rem offset */
+    }
+
+    /* Icon images */
+    .icon-folder, .icon-file {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .icon-folder {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f59e0b'><path d='M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z'/></svg>");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    .icon-file {
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23636cf1'><path d='M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z'/></svg>");
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+
+    /* Current folder content */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.4rem;
+    }
+
+    /* Full-width file content */
+    .file-content-wrapper {
+      max-width: 100%;
+    }
+
+    .content-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .content-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+      border-color: var(--primary);
+    }
+
+    .content-icon {
+      height: 110px;
+      background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(79,70,229,0.05) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.8rem;
+    }
+
+    .content-info {
+      padding: 1.1rem 1.3rem;
+    }
+
+    .content-info .name {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin-bottom: 0.3rem;
+      cursor: pointer;
+    }
+
+    .content-info .meta {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1024px) {
+      aside { width: 240px; }
+      main { padding: 2rem; }
+    }
+
+    @media (max-width: 768px) {
+      .container { flex-direction: column; }
+      aside {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        max-height: 45vh;
+        overflow-y: auto;
+      }
+      main { padding: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/" class="logo">TeamFlow</a>
+    <div class="header-right">
+      <nav>
+        <ul>
+          <li><a href="group-service.html">Group Service</a></li>
+          <li><a href="#">Project Service</a></li>
+          <li><a href="#">Log out</a></li>
+        </ul>
+      </nav>
+      <button id="theme-toggle" aria-label="Toggle theme">
+        <i class="fa-solid fa-sun"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="tree" style="padding: 0 1rem;">
+        <!-- Marketing Team -->
+        <details>
+          <summary><span class="arrow">▶</span><span class="summary-text">Marketing Team</span></summary>
+          <ul>
+            <details>
+              <summary><span class="arrow">▶</span><span class="summary-text">Q1 2026 Campaign</span></summary>
+              <ul>
+                <li>
+                  <div class="item folder" data-folder="Creative Assets">
+                    <span class="folder-arrow">▶</span>
+                    <span class="icon-folder"></span>
+                    Creative Assets
+                  </div>
+                  <ul class="folder-content" data-folder-content="Creative Assets">
+                    <li>
+                      <div class="item folder" data-folder="Banners">
+                        <span class="folder-arrow">▶</span>
+                        <span class="icon-folder"></span>
+                        Banners
+                      </div>
+                      <ul class="folder-content" data-folder-content="Banners">
+                        <li><div class="item file"><span class="icon-file"></span>banner-wide-1200x400.jpg</div></li>
+                        <li><div class="item file"><span class="icon-file"></span>banner-square-800x800.png</div></li>
+                        <li><div class="item file"><span class="icon-file"></span>banner-mobile-600x300.jpg</div></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <div class="item folder" data-folder="Logos & Icons">
+                        <span class="folder-arrow">▶</span>
+                        <span class="icon-folder"></span>
+                        Logos &amp; Icons
+                      </div>
+                      <ul class="folder-content" data-folder-content="Logos & Icons">
+                        <li><div class="item file"><span class="icon-file"></span>logo-primary.svg</div></li>
+                        <li><div class="item file"><span class="icon-file"></span>logo-white.svg</div></li>
+                        <li><div class="item file"><span class="icon-file"></span>icon-set.zip</div></li>
+                      </ul>
+                    </li>
+                    <li><div class="item file"><span class="icon-file"></span>hero-2026-dark.png</div></li>
+                    <li><div class="item file"><span class="icon-file"></span>Brand Guidelines v4.pdf</div></li>
+                    <li><div class="item file"><span class="icon-file"></span>product-mockup-03.jpg</div></li>
+                  </ul>
+                </li>
+                <li><div class="item file"><span class="icon-file"></span>Media Plan v2.1.xlsx</div></li>
+                <li><div class="item file"><span class="icon-file"></span>Budget Overview.pdf</div></li>
+              </ul>
+            </details>
+            <details>
+              <summary><span class="arrow">▶</span><span class="summary-text">Social Content</span></summary>
+              <ul>
+                <li>
+                  <div class="item folder" data-folder="Instagram Pack">
+                    <span class="folder-arrow">▶</span>
+                    <span class="icon-folder"></span>
+                    Instagram Pack
+                  </div>
+                  <ul class="folder-content" data-folder-content="Instagram Pack">
+                    <li><div class="item file"><span class="icon-file"></span>post-001.jpg</div></li>
+                    <li><div class="item file"><span class="icon-file"></span>post-002.jpg</div></li>
+                    <li><div class="item file"><span class="icon-file"></span>story-template.psd</div></li>
+                  </ul>
+                </li>
+                <li><div class="item file"><span class="icon-file"></span>Calendar March 2026.ics</div></li>
+              </ul>
+            </details>
+          </ul>
+        </details>
+
+        <!-- Product Team -->
+        <details>
+          <summary><span class="arrow">▶</span><span class="summary-text">Product Team</span></summary>
+          <ul>
+            <li>
+              <div class="item folder" data-folder="v3 Redesign">
+                <span class="folder-arrow">▶</span>
+                <span class="icon-folder"></span>
+                v3 Redesign
+              </div>
+              <ul class="folder-content" data-folder-content="v3 Redesign">
+                <li>
+                  <div class="item folder" data-folder="User Testing Results">
+                    <span class="folder-arrow">▶</span>
+                    <span class="icon-folder"></span>
+                    User Testing Results
+                  </div>
+                  <ul class="folder-content" data-folder-content="User Testing Results">
+                    <li><div class="item file"><span class="icon-file"></span>Session 1 - Jan 15.pdf</div></li>
+                    <li><div class="item file"><span class="icon-file"></span>Session 2 - Jan 20.pdf</div></li>
+                    <li><div class="item file"><span class="icon-file"></span>Summary Report.xlsx</div></li>
+                  </ul>
+                </li>
+                <li><div class="item file"><span class="icon-file"></span>Homepage Mockup.fig</div></li>
+                <li><div class="item file"><span class="icon-file"></span>Mobile Views.fig</div></li>
+              </ul>
+            </li>
+            <li><div class="item file"><span class="icon-file"></span>Component Library.fig</div></li>
+          </ul>
+        </details>
+
+        <!-- Personal -->
+        <details>
+          <summary><span class="arrow">▶</span><span class="summary-text">Personal</span></summary>
+          <ul>
+            <li><div class="item file"><span class="icon-file"></span>Brainstorm 2026.md</div></li>
+          </ul>
+        </details>
+      </div>
+    </aside>
+
+    <main>
+      <div id="empty-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; text-align: center;">
+        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.3;">📂</div>
+        <h2 style="color: var(--muted); font-weight: 500; font-size: 1.3rem;">Select a folder or file to view</h2>
+        <p style="color: var(--muted); margin-top: 0.5rem;">Choose an item from the sidebar to get started</p>
+      </div>
+
+      <div id="content-area" style="display: none;">
+        <div class="breadcrumb" id="breadcrumb"></div>
+        <h1 id="content-title"></h1>
+        <div class="toolbar">
+          <button class="btn"><i class="fa-solid fa-plus"></i> New File</button>
+          <button class="btn"><i class="fa-solid fa-folder-plus"></i> New Folder</button>
+          <button class="btn btn-outline"><i class="fa-solid fa-upload"></i> Upload</button>
+        </div>
+        <div id="content-container"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    const icon = toggle.querySelector('i');
+
+    let theme = localStorage.getItem('theme') ||
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+
+    html.setAttribute('data-theme', theme);
+    icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+
+    toggle.addEventListener('click', () => {
+      theme = theme === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', theme);
+      icon.className = theme === 'dark' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+      localStorage.setItem('theme', theme);
+    });
+
+    // Sidebar item click handling
+    const emptyState = document.getElementById('empty-state');
+    const contentArea = document.getElementById('content-area');
+    const contentTitle = document.getElementById('content-title');
+    const breadcrumb = document.getElementById('breadcrumb');
+    const contentContainer = document.getElementById('content-container');
+
+    // ── Content data  (path = breadcrumb segments, no "Home") ──
+    const contentData = {
+      'Marketing Team': {
+        type: 'group',
+        path: ['Marketing Team'],
+        items: [
+          { icon: '📁', name: 'Q1 2026 Campaign', meta: '3 folders, 2 files • Updated 3 days ago' },
+          { icon: '📁', name: 'Social Content',    meta: '1 folder, 1 file • Updated 1 week ago' }
+        ]
+      },
+      'Product Team': {
+        type: 'group',
+        path: ['Product Team'],
+        items: [
+          { icon: '📁', name: 'v3 Redesign',           meta: '2 folders, 3 files • Updated 2 days ago' },
+          { icon: '📄', name: 'Component Library.fig', meta: '15.2 MB • Feb 3' }
+        ]
+      },
+      'Personal': {
+        type: 'group',
+        path: ['Personal'],
+        items: [
+          { icon: '📝', name: 'Brainstorm 2026.md', meta: '8 KB • Feb 2' }
+        ]
+      },
+      'Q1 2026 Campaign': {
+        type: 'project',
+        path: ['Marketing Team', 'Q1 2026 Campaign'],
+        items: [
+          { icon: '📁', name: 'Creative Assets',      meta: '2 folders, 3 files • 3 days ago' },
+          { icon: '📄', name: 'Media Plan v2.1.xlsx', meta: '156 KB • Jan 28' },
+          { icon: '📄', name: 'Budget Overview.pdf',  meta: '2.1 MB • Jan 30' }
+        ]
+      },
+      'Social Content': {
+        type: 'project',
+        path: ['Marketing Team', 'Social Content'],
+        items: [
+          { icon: '📁', name: 'Instagram Pack',            meta: '3 files • Feb 1' },
+          { icon: '📅', name: 'Calendar March 2026.ics',   meta: '24 KB • Jan 25' }
+        ]
+      },
+      'v3 Redesign': {
+        type: 'project',
+        path: ['Product Team', 'v3 Redesign'],
+        items: [
+          { icon: '📁', name: 'User Testing Results', meta: '15 items • Jan 28' },
+          { icon: '🎨', name: 'Homepage Mockup.fig',  meta: '12.4 MB • Feb 2' },
+          { icon: '🎨', name: 'Mobile Views.fig',     meta: '8.7 MB • Feb 1' }
+        ]
+      },
+      'Creative Assets': {
+        type: 'folder',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Creative Assets'],
+        items: [
+          { icon: '📁', name: 'Banners',                   meta: '12 items • 3 days ago' },
+          { icon: '📁', name: 'Logos & Icons',             meta: '28 items • 1 week ago' },
+          { icon: '🖼️', name: 'hero-2026-dark.png',       meta: '2.4 MB • Feb 1' },
+          { icon: '📄', name: 'Brand Guidelines v4.pdf',   meta: '8.1 MB • Jan 29' },
+          { icon: '🖼️', name: 'product-mockup-03.jpg',    meta: '4.7 MB • Feb 2' }
+        ]
+      },
+      'Banners': {
+        type: 'folder',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Creative Assets', 'Banners'],
+        items: [
+          { icon: '🖼️', name: 'banner-wide-1200x400.jpg',   meta: '856 KB • Feb 1' },
+          { icon: '🖼️', name: 'banner-square-800x800.png',  meta: '1.2 MB • Feb 1' },
+          { icon: '🖼️', name: 'banner-mobile-600x300.jpg',  meta: '412 KB • Jan 31' }
+        ]
+      },
+      'Logos & Icons': {
+        type: 'folder',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Creative Assets', 'Logos & Icons'],
+        items: [
+          { icon: '🖼️', name: 'logo-primary.svg', meta: '24 KB • Jan 20' },
+          { icon: '🖼️', name: 'logo-white.svg',   meta: '22 KB • Jan 20' },
+          { icon: '🖼️', name: 'icon-set.zip',     meta: '3.4 MB • Jan 28' }
+        ]
+      },
+      'Instagram Pack': {
+        type: 'folder',
+        path: ['Marketing Team', 'Social Content', 'Instagram Pack'],
+        items: [
+          { icon: '🖼️', name: 'post-001.jpg',        meta: '1.2 MB • Feb 1' },
+          { icon: '🖼️', name: 'post-002.jpg',        meta: '1.5 MB • Feb 1' },
+          { icon: '🖼️', name: 'story-template.psd',  meta: '8.3 MB • Jan 29' }
+        ]
+      },
+      'User Testing Results': {
+        type: 'folder',
+        path: ['Product Team', 'v3 Redesign', 'User Testing Results'],
+        items: [
+          { icon: '📄', name: 'Session 1 - Jan 15.pdf', meta: '2.1 MB • Jan 15' },
+          { icon: '📄', name: 'Session 2 - Jan 20.pdf', meta: '1.8 MB • Jan 20' },
+          { icon: '📊', name: 'Summary Report.xlsx',    meta: '245 KB • Jan 28' }
+        ]
+      },
+      'Media Plan v2.1.xlsx': {
+        type: 'file',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Media Plan v2.1.xlsx'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">📊 Media Plan Q1 2026</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">This Excel spreadsheet contains the comprehensive media planning strategy for Q1 2026 campaign.</p>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Budget Breakdown:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>Digital Advertising: $125,000</li>
+            <li>Social Media: $75,000</li>
+            <li>Traditional Media: $50,000</li>
+            <li>Influencer Marketing: $30,000</li>
+          </ul>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">Last modified: Jan 28, 2026 by Sarah Johnson</p>
+        </div>`
+      },
+      'Budget Overview.pdf': {
+        type: 'file',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Budget Overview.pdf'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">📄 Budget Overview Document</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">A comprehensive PDF document outlining the Q1 2026 campaign budget allocation and financial projections.</p>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Key Highlights:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>Total Campaign Budget: $280,000</li>
+            <li>Expected ROI: 3.5x</li>
+            <li>Timeline: January - March 2026</li>
+            <li>Target Audience: 25-45 year olds</li>
+          </ul>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">File size: 2.1 MB • 8 pages</p>
+        </div>`
+      },
+      'hero-2026-dark.png': {
+        type: 'file',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Creative Assets', 'hero-2026-dark.png'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">🖼️ Hero Image - Dark Theme</h3>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 300px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin: 1.5rem 0; color: white; font-size: 2rem; font-weight: bold;">
+            HERO IMAGE PREVIEW
+          </div>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <p style="line-height: 1.6;"><strong>Dimensions:</strong> 1920 x 1080 px</p>
+          <p style="line-height: 1.6;"><strong>Format:</strong> PNG with transparency</p>
+          <p style="line-height: 1.6;"><strong>Color Mode:</strong> RGB</p>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">File size: 2.4 MB • Created: Feb 1, 2026</p>
+        </div>`
+      },
+      'Brand Guidelines v4.pdf': {
+        type: 'file',
+        path: ['Marketing Team', 'Q1 2026 Campaign', 'Creative Assets', 'Brand Guidelines v4.pdf'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">📘 Brand Guidelines Version 4.0</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">Official brand guidelines document covering logo usage, color palette, typography, and brand voice.</p>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Sections Included:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>Logo Variations & Usage Rules</li>
+            <li>Color Palette (Primary & Secondary)</li>
+            <li>Typography Guidelines</li>
+            <li>Imagery Style Guide</li>
+            <li>Brand Voice & Tone</li>
+            <li>Do's and Don'ts</li>
+          </ul>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">45 pages • Last updated: Jan 29, 2026</p>
+        </div>`
+      },
+      'Component Library.fig': {
+        type: 'file',
+        path: ['Product Team', 'Component Library.fig'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">🎨 Design System Component Library</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">Comprehensive Figma file containing all reusable UI components for the TeamFlow design system.</p>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Component Categories:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>Buttons (Primary, Secondary, Tertiary)</li>
+            <li>Form Elements (Inputs, Dropdowns, Checkboxes)</li>
+            <li>Navigation Components</li>
+            <li>Cards & Containers</li>
+            <li>Icons & Illustrations</li>
+            <li>Typography Styles</li>
+          </ul>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">File size: 15.2 MB • 124 components • Last modified: Feb 3, 2026</p>
+        </div>`
+      },
+      'Brainstorm 2026.md': {
+        type: 'file',
+        path: ['Personal', 'Brainstorm 2026.md'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">💡 2026 Ideas & Goals</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">Personal brainstorming document for goals and ideas throughout 2026.</p>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Q1 Goals:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>Launch new marketing campaign</li>
+            <li>Complete design system overhaul</li>
+            <li>Improve team collaboration workflows</li>
+            <li>Conduct quarterly user research</li>
+          </ul>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Random Ideas:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>AI-powered content suggestions</li>
+            <li>Dark mode improvements</li>
+            <li>Mobile app redesign</li>
+          </ul>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">Last edited: Feb 2, 2026</p>
+        </div>`
+      },
+      'Calendar March 2026.ics': {
+        type: 'file',
+        path: ['Marketing Team', 'Social Content', 'Calendar March 2026.ics'],
+        content: `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-top: 2rem;">
+          <h3 style="margin-bottom: 1rem; color: var(--primary);">📅 Social Content Calendar</h3>
+          <p style="margin-bottom: 1rem; line-height: 1.6;">iCalendar file containing all scheduled social media posts for March 2026.</p>
+          <hr style="border: none; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+          <h4 style="margin-bottom: 0.5rem;">Scheduled Posts:</h4>
+          <ul style="line-height: 1.8; margin-left: 1.5rem;">
+            <li>March 5 - Product launch announcement</li>
+            <li>March 12 - Customer testimonial video</li>
+            <li>March 19 - Behind the scenes content</li>
+            <li>March 26 - End of quarter celebration</li>
+          </ul>
+          <p style="margin-top: 1.5rem; color: var(--muted); font-size: 0.9rem;">21 events • Compatible with Google Calendar, Outlook, Apple Calendar</p>
+        </div>`
+      }
+    };
+
+    // ── Build breadcrumb HTML from a path array ──
+    // Every segment except the last is a clickable link; the last is plain text.
+    function buildBreadcrumb(pathArr) {
+      return pathArr.map((seg, i) => {
+        const isLast = i === pathArr.length - 1;
+        const sep   = i > 0 ? '<span>›</span> ' : '';
+        return isLast
+          ? sep + `<span>${seg}</span>`
+          : sep + `<a class="bc-link" data-target="${seg}">${seg}</a>`;
+      }).join(' ');
+    }
+
+    // ── Find the matching sidebar element for a given name ──
+    function findSidebarElement(name) {
+      // 1. summary with .summary-text
+      for (const sum of document.querySelectorAll('.tree summary')) {
+        if (sum.querySelector('.summary-text').textContent.trim() === name) return sum;
+      }
+      // 2. .item.folder  (uses data-folder)
+      const folder = document.querySelector(`.tree .item.folder[data-folder="${name}"]`);
+      if (folder) return folder;
+      // 3. .item.file
+      for (const file of document.querySelectorAll('.tree .item.file')) {
+        if (file.textContent.trim() === name) return file;
+      }
+      return null;
+    }
+
+    // ── Open every <details> ancestor & expand every .folder ancestor
+    //    so the target is visible in the sidebar ──
+    function revealInSidebar(el) {
+      let node = el.parentElement;
+      while (node) {
+        if (node.tagName === 'DETAILS' && !node.open) node.open = true;
+        if (node.classList && node.classList.contains('folder-content') && !node.classList.contains('show')) {
+          node.classList.add('show');
+          // mark the parent folder as expanded
+          const prevFolder = node.previousElementSibling;
+          if (prevFolder && prevFolder.classList.contains('folder')) prevFolder.classList.add('expanded');
+        }
+        node = node.parentElement;
+      }
+    }
+
+    // ── Core navigation: renders content + breadcrumb, syncs sidebar ──
+    function navigateTo(name) {
+      const data = contentData[name];
+      if (!data) return;
+
+      // active highlight
+      document.querySelectorAll('.tree .item, .tree summary').forEach(el => el.classList.remove('active'));
+      const sidebarEl = findSidebarElement(name);
+      if (sidebarEl) {
+        sidebarEl.classList.add('active');
+        revealInSidebar(sidebarEl);
+      }
+
+      emptyState.style.display  = 'none';
+      contentArea.style.display = 'block';
+      contentTitle.textContent  = name;
+      breadcrumb.innerHTML      = buildBreadcrumb(data.path);
+
+      // render body
+      if (data.type === 'file' && data.content) {
+        contentContainer.innerHTML = `<div class="file-content-wrapper">${data.content}</div>`;
+      } else if (data.items) {
+        contentContainer.innerHTML = `<div class="content-grid">${data.items.map(item => `
+          <div class="content-card" data-target="${item.name}">
+            <div class="content-icon">${item.icon}</div>
+            <div class="content-info">
+              <div class="name">${item.name}</div>
+              <div class="meta">${item.meta}</div>
+            </div>
+          </div>
+        `).join('')}</div>`;
+      }
+
+      // wire breadcrumb clicks (event delegation on the freshly rendered HTML)
+      breadcrumb.querySelectorAll('.bc-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          navigateTo(link.dataset.target);
+        });
+      });
+
+      // wire content-card clicks
+      contentContainer.querySelectorAll('.content-card').forEach(card => {
+        card.addEventListener('click', () => navigateTo(card.dataset.target));
+      });
+    }
+
+    // ── Sidebar: folder items ──
+    document.querySelectorAll('.tree .item.folder').forEach(folderItem => {
+      const folderName    = folderItem.getAttribute('data-folder');
+      const folderContent = document.querySelector(`.folder-content[data-folder-content="${folderName}"]`);
+      const arrow         = folderItem.querySelector('.folder-arrow');
+
+      folderItem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const arrowRect = arrow.getBoundingClientRect();
+        const onArrow   = e.clientX >= arrowRect.left  && e.clientX <= arrowRect.right &&
+                          e.clientY >= arrowRect.top   && e.clientY <= arrowRect.bottom;
+        if (onArrow) {
+          folderItem.classList.toggle('expanded');
+          if (folderContent) folderContent.classList.toggle('show');
+        } else {
+          navigateTo(folderName);
+        }
+      });
+    });
+
+    // ── Sidebar: file items ──
+    document.querySelectorAll('.tree .item.file').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigateTo(item.textContent.trim());
+      });
+    });
+
+    // ── Sidebar: summary (group / project) items ──
+    document.querySelectorAll('.tree summary').forEach(summary => {
+      summary.addEventListener('click', (e) => {
+        const arrow     = summary.querySelector('.arrow');
+        const arrowRect = arrow.getBoundingClientRect();
+        const onArrow   = e.clientX >= arrowRect.left  && e.clientX <= arrowRect.right &&
+                          e.clientY >= arrowRect.top   && e.clientY <= arrowRect.bottom;
+        if (!onArrow) {
+          e.preventDefault();
+          navigateTo(summary.querySelector('.summary-text').textContent.trim());
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
