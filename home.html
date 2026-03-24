@@ -10,479 +10,709 @@
 </head>
 
 <style>
-    html {
-        scrollbar-width: thin;
-        scrollbar-color: #5865f2 black;
-        
-        scroll-behavior: smooth;
-    }
+/* System */
 
-    body {
-        font-family: Arial;
-        
-        margin: 0px;
+html {
+    scrollbar-color: #5865f2 black;
+    scrollbar-width: thin;
+    
+    scroll-behavior: smooth;
+}
 
-        flex: 1;
-    }
+body {
+    background-color: white;
+
+    font-family: Arial;
+    
+    flex: 1;
+
+    margin: 0px;
+}
 
 /* Navigation Bar */
-    .navigation-bar {
-        background-color: black;
 
-        border-bottom: 1px solid white;
-        
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+.navigation-bar {
+    color: white;
+    background-color: black;
 
-        position: sticky;
-        top: 0px;
+    font-size: medium;
+    font-weight: normal;
 
-        padding: 10px 30px;
+    border-bottom: 1px solid white;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 
-        z-index: 10;
-    }
+    position: sticky;
+    top: 0px;
 
-    .navigation-bar .label {
-        color: white;
-        
-        font-size: xx-large;
-        font-weight: 900;
-    }
+    padding: 10px 30px;
 
-    .navigation-bar .buttons {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 30px;
-    }
+    z-index: 10;
+}
 
-    .navigation-bar button {
-        background-color: transparent;
-        color: white;
+.navigation-bar label {
+    font-size: xx-large;
+    font-weight: 900;
+}
 
-        font-size: medium;
-        font-weight: bold;
+.navigation-bar .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 30px; 
+}
 
-        border: none;
-        border-radius: 10px;
+.navigation-bar .buttons button {
+    color: white;
+    background-color: transparent;
+    
+    font-size: medium;
+    font-weight: bold;
+    
+    border: none;
+    border-radius: 10px;
+    
+    padding: 10px 20px;
 
-        padding: 10px 20px;
+    cursor: pointer;
 
-        cursor: pointer;
+    transition: 0.3s;
+}
 
-        transition: 0.3s;
-    }
+.navigation-bar .buttons button:hover {
+    color: #5865f2;
+    background-color: white;
+}
 
-    .navigation-bar button:hover {
-        background-color: white;
-        color: #5865f2;
-    }
+.themes {
+    color: white;
+    background-color: transparent;
+    
+    font-size: medium;
+    font-weight: bold;
+    
+    border-radius: 10px;
+    
+    padding: 10px;
 
-    .themes {
-        color: white;
-        font-size: medium;
+    cursor: pointer;
 
-        border-radius: 10px;
+    transition: 0.3s;
+}
 
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        
-        padding: 10px;
-
-        cursor: pointer;
-
-        transition: 0.3s;
-    }
-
-    .themes:hover {
-        background-color: white;
-        color: #5865f2;
-    }
+.themes:hover {
+    color: #5865f2;
+    background-color: white;
+}
 
 /* Header */
-    .header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
 
-        padding: 60px;
-    }
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
 
-    .header .large {
-        font-size: xx-large;
-        font-weight: bold;
-    }
+    padding: 60px;
+}
 
-    .header .small {
-        font-size: larger;
+.header .large {
+    color: black;
+    
+    font-size: xx-large;
+    font-weight: bold;
+}
 
-        width: 700px;
+.header .small {
+    color: gray;
+    
+    font-size: larger;
+    font-weight: normal;
 
-        text-align: center;
-    }
+    width: 700px;
 
-    .header button {
-        background-color: #5865f2;
-        color: white;
+    text-align: center;
+}
 
-        font-size: large;
-        font-weight: bold;
+.header button {
+    color: white;
+    background-color: #5865f2;
 
-        border: none;
-        border-radius: 10px;
+    font-size: larger;
+    font-weight: bold;
 
-        padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
 
-        cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 
-        transition: 0.3s;
-    }
+    padding: 10px 20px;
 
-    .header button:hover {
-        box-shadow: 0px 10px 0px 0px black;
+    cursor: pointer;
 
-        transform: translateY(-3px);
-    }
+    transition: 0.3s;
+}
 
-    .header button:active {
-        box-shadow: none;
+.header button:hover {
+    box-shadow: 0px 10px 0px 0px black;
 
-        transition: 0.1s;
+    transform: translateY(-3px);
+}
 
-        transform: translateY(0px);
-    }
+.header button:active {
+    box-shadow: none;
+
+    transition: 0.1s;
+
+    transform: translateY(0px);
+}
 
 /* Core Services */
-    .core-services {
-        background-color: black;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 30px;
+.core-services {
+    background-color: black;
 
-        padding: 60px;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
 
-    .core-services .label {
-        color: white;
+    padding: 60px;
 
-        font-size: xx-large;
-        font-weight: bold;
-    }
+    overflow: hidden;
+}
 
-    .services {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 30px;
-    }
+.core-services label {
+    color: white;
 
-    .service {
-        border-radius: 10px;
-        
-        display: flex;
-        flex-direction: column;
+    font-size: xx-large;
+    font-weight: bold;
+}
 
-        cursor: pointer;
-
-        transition: 0.3s;
-    }
-
-    .service:hover {
-        box-shadow: 0px 10px 0px 0px #5865f2;
-        
-        transform: translateY(-10px);
-    }
-
-    .service:active {
-        box-shadow: none;
-
-        transition: 0.1s;
-        
-        transform: translateY(0px);
-    }
-
-    .service label:hover {
-        cursor: pointer;
-    }
+.services {
+    width: 100%;
     
-    .service .logo {
-        background-color: #5865f2;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    gap: 30px;
 
-        border-radius: 10px 10px 0px 0px;
-        
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
 
-        padding: 60px;
-    }
+    overflow: auto;
 
-    .logo .background {
-        background-color: white;
+    scrollbar-color: #5865f2 black;
+    scrollbar-width: thin;
+}
 
-        width: 60px;
-        height: 60px;
+/* Service */
 
-        border-radius: 60px;
+.service {
+    width: 300px;
+    
+    border-radius: 10px;
+    
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
 
-        box-shadow: 5px 5px 0px 0px black;
+    cursor: pointer;
 
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-    }
+    transition: 0.3s;
+}
 
-    .background label {
-        color: #5865f2;
+.service:hover {
+    box-shadow: 0px 10px 0px 0px #5865f2;
+    
+    transform: translateY(-10px);
+}
 
-        font-size: xx-large;
-        font-weight: bold;
-    }
+.service:active {
+    box-shadow: none;
 
-    .service .introduction {
-        background-color: white;
+    transition: 0.1s;
+    
+    transform: translateY(0px);
+}
 
-        border-radius: 0px 0px 10px 10px;
-        
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 30px;
+.service:hover .icon i {
+    box-shadow: 0px 10px 10px 0px black;
+    
+    transform: translateY(-10px);
 
-        padding: 60px;
-    }
+    animation: floating 1s ease-in-out infinite;
+}
 
-    .introduction .large {
-        color: black;
-        
-        font-size: xx-large;
-        font-weight: bold;
-    }
+.service .icon {
+    color: #5865f2;
+    background-color: #5865f2;
 
-    .introduction .small {
-        color: black;
-        
-        font-size: medium;
-        text-align: justify;
-    }
+    border-radius: 10px 10px 0px 0px;
 
-    .service .access {
-        color: #5865f2;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 
-        font-size: medium;
-        font-weight: bold;
-    }
+    padding: 30px;
+}
 
-    /* Project Service - Orange Theme */
-    .service.project .logo {
-        background-color: #ff751f;
-    }
+.icon i {
+    background-color: white;
 
-    .service.project .background label {
-        color: #ff751f;
-    }
+    width: 60px;
+    height: 60px;
 
-    .service.project .introduction .access {
-        color: #ff751f;
-    }
+    font-size: xx-large;
 
-    .service.project:hover {
-        box-shadow: 0px 10px 0px 0px #ff751f;
-    }
+    border-radius: 60px;
 
-    .service.project:active {
-        box-shadow: none;
-    }
+    box-shadow: 0px 0px 0px 0px;
 
-    /* File Service - Blue Theme */
-    .service.file .logo {
-        background-color: #38b6ff;
-    }
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
 
-    .service.file .background label {
-        color: #38b6ff;
-    }
+    transition: 0.3s;
+}
 
-    .service.file .introduction .access {
-        color: #38b6ff;
-    }
+.service .content {
+    color: black;
+    background-color: white;
 
-    .service.file:hover {
-        box-shadow: 0px 10px 0px 0px #38b6ff;
-    }
+    height: 100%;
 
-    .service.file:active {
-        box-shadow: none;
-    }
+    border-radius: 0px 0px 10px 10px;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+
+    padding: 30px;
+}
+
+.service .content .labels {
+    height: 100%;
+
+    border-radius: 0px 0px 10px 10px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.labels .large {
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.labels .small {
+    color: gray;
+    
+    font-size: medium;
+    font-weight: normal;
+}
+
+.content .access {
+    color: #5865f2;
+    
+    font-size: medium;
+    font-weight: bold;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Appointments Service */
+
+.service.appointment:hover {
+    box-shadow: 0px 10px 0px 0px #ff751f;
+}
+
+.service.appointment:active {
+    box-shadow: none;
+}
+
+.service.appointment .icon {
+    color: #ff751f;
+    background-color: #ff751f;
+}
+
+.service.appointment .content .access {
+    color: #ff751f;
+}
+
+/* Customers Service */
+
+.service.client:hover {
+    box-shadow: 0px 10px 0px 0px #38b6ff;
+}
+
+.service.client:active {
+    box-shadow: none;
+}
+
+.service.client .icon {
+    color: #38b6ff;
+    background-color: #38b6ff;
+}
+
+.service.client .content .access {
+    color: #38b6ff;
+}
+
+/* Partner Service */
+
+.service.partner:hover {
+    box-shadow: 0px 10px 0px 0px lightcoral;
+}
+
+.service.partner:active {
+    box-shadow: none;
+}
+
+.service.partner .icon {
+    color: lightcoral;
+    background-color: lightcoral;
+}
+
+.service.partner .content .access {
+    color: lightcoral;
+}
+
+/* Settlement Service */
+
+.service.settlement:hover {
+    box-shadow: 0px 10px 0px 0px lightblue;
+}
+
+.service.settlement:active {
+    box-shadow: none;
+}
+
+.service.settlement .icon {
+    color: lightblue;
+    background-color: lightblue;
+}
+
+.service.settlement .content .access {
+    color: lightblue;
+}
+
+/* Group Service */
+
+.service.group:hover {
+    box-shadow: 0px 10px 0px 0px gray;
+}
+
+.service.group:active {
+    box-shadow: none;
+}
+
+.service.group .icon {
+    color: gray;
+    background-color: gray;
+}
+
+.service.group .content .access {
+    color: gray;
+}
+
+/* Catalog Service */
+
+.service.catalog:hover {
+    box-shadow: 0px 10px 0px 0px gray;
+}
+
+.service.catalog:active {
+    box-shadow: none;
+}
+
+.service.catalog .icon {
+    color: gray;
+    background-color: gray;
+}
+
+.service.catalog .content .access {
+    color: gray;
+}
+
+/* Integrations Service */
+
+.service.integrations:hover {
+    box-shadow: 0px 10px 0px 0px gray;
+}
+
+.service.integrations:active {
+    box-shadow: none;
+}
+
+.service.integrations .icon {
+    color: gray;
+    background-color: gray;
+}
+
+.service.integrations .content .access {
+    color: gray;
+}
 
 /* Footer */
-    .footer {
-        background-color: #5865f2;
-        color: white;
 
-        border-top: 5px solid white;
+.footer {
+    background-color: #5865f2;
+    color: white;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 30px;
+    border-top: 6px solid white;
 
-        padding: 60px;
-    }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
 
-    .footer .labels {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
+    padding: 60px;
+}
 
-        opacity: 0.7;
-    }
+.footer .labels {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
 
-    .footer .labels label {
-        font-size: medium;
-    }
+    opacity: 0.7;
+}
 
-    .footer .buttons {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 10px;
-    }
+.footer .labels label {
+    font-size: medium;
+}
 
-    .footer .buttons button {
-        background-color: transparent;
-        color: white;
+.footer .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
 
-        font-size: medium;
-        font-weight: bold;
+.footer .buttons button {
+    background-color: transparent;
+    color: white;
 
-        border: none;
+    font-size: medium;
+    font-weight: bold;
 
-        cursor: pointer;
+    border: none;
 
-        transition: 0.3s;
-    }
+    cursor: pointer;
 
-    .footer .buttons button:hover {
-        text-decoration: underline;
+    transition: 0.3s;
+}
 
-        transform: scale(1.1);
-    }
+.footer .buttons button:hover {
+    text-decoration: underline;
 
-    .footer .label {
-        width: 700px;
-        
-        font-size: medium;
-        text-align: center;
+    transform: scale(1.1);
+}
 
-        opacity: 0.7;
-    }
+.footer .label {
+    width: 700px;
+    
+    font-size: medium;
+    text-align: center;
+
+    opacity: 0.7;
+}
+
+@keyframes floating {
+    0%   { transform: translateY(0px); }
+    50%  { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+}
 </style>
 
 <body>
-    <div class="navigation-bar">
-        <label class="label">Proman Micro-Services</label>
+<div class="navigation-bar">
+    <label>Proman Micro-Services</label>
 
-        <div class="buttons">
-            <button onclick="window.location.href='#services'">Services</button>
-            <button onclick="window.location.href='#footer'">About</button>
-            <button onclick="window.location.href='modern-register-log-in.html'">Log in</button>
+    <div class="buttons">
+        <button onclick="window.location.href='#core-services'">Services</button>
+        <button onclick="window.location.href='#footer'">About</button>
+        <button onclick="window.location.href='modern-register-log-in.html'">Log in</button>
 
-            <div class="themes"><i class="fa-solid fa-moon"></i></div>
-        </div>
+        <div class='themes'><i class="fa-solid fa-moon"></i></div>
     </div>
+</div>
 
-    <div class="header">
-        <label class="large">Collaborative Workspace Platform</label>
-        <label class="small">Modern microservices for teams: organize groups, manage projects, and handle files - all in one secure, scalable system.</label>
-        <button onclick="window.location.href='#services'">Explore Services <i class="fa-solid fa-arrow-right"></i></button>
-    </div>
+<div class="header">
+    <label class="large">Collaborative Workspace Platform</label>
+    <label class="small">Modern microservices for teams: organize groups, manage projects, and handle files - all in one secure, scalable system.</label>
+    
+    <button onclick="window.location.href='#core-services'">Explore Services<i class="fa-solid fa-arrow-right"></i></button>
+</div>
 
-    <div class="core-services" id="services">
-        <label class="label">Core Services</label>
+<div class="core-services" id="core-services">
+    <label>Core Services</label>
 
-        <div class="services">
-            <div class="service" onclick="window.location.href='prototype-testing/group-service-prototype-1.html'">
-                <div class="logo">
-                    <div class="background">
-                        <label>Gr</label>
-                    </div>
+    <div class="services">
+        <div class="service" onclick="window.location.href='prototype-testing/group-service-prototype-1.html'">
+            <div class="icon">
+                <i class="fa-solid fa-users"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Group Service</div>
+                    <div class="small">Create and manage teams, departments, classes or communities. Handle memberships, roles, permissions and group settings.</div>
                 </div>
                 
-                <div class="introduction">
-                    <label class="large">Group Service</label>
-                    <label class="small">Create and manage teams, departments, classes or communities. Handle memberships, roles, permissions and group settings.</label>
-                    <label class="access">Access Group Service <i class="fa-solid fa-arrow-right"></i></label>
-                </div>
+                <div class="access">Access Group Service<i class="fa-solid fa-arrow-right"></i></div>
             </div>
-
-            <div class="service project" onclick="window.location.href='prototype-testing/project-service-prototype/project-service-prototype-2.html'">
-                <div class="logo">
-                    <div class="background">
-                        <label>Pr</label>
-                    </div>
+        </div>
+        
+        <div class="service appointment" onclick="window.location.href='prototype-testing/project-service-prototype/project-service-prototype-2.html'">
+            <div class="icon">
+                <i class="fa-solid fa-cube"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Project Service</div>
+                    <div class="small">Organize work with projects, tasks, milestones, assignments and progress tracking. Connects deeply with groups and files.</div>
                 </div>
                 
-                <div class="introduction">
-                    <label class="large">Project Service</label>
-                    <label class="small">Organize work with projects, tasks, milestones, assignments and progress tracking. Connects deeply with groups and files.</label>
-                    <label class="access">Access Project Service <i class="fa-solid fa-arrow-right"></i></label>
-                </div>
+                <div class="access">Access Project Service<i class="fa-solid fa-arrow-right"></i></div>
             </div>
+        </div>
 
-            <div class="service file" onclick="window.location.href='ai-prototype/redesign-by-me/file-service.html'">
-                <div class="logo">
-                    <div class="background">
-                        <label>F</label>
-                    </div>
+        <div class="service client" onclick="window.location.href='ai-prototype/redesign-by-me/file-service.html'">
+            <div class="icon">
+                <i class="fa-solid fa-folder-open"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">File Service</div>
+                    <div class="small">Secure file storage, upload, versioning, sharing, previews and organization. Attached to groups and projects.</div>
                 </div>
                 
-                <div class="introduction">
-                    <label class="large">File Service</label>
-                    <label class="small">Secure file storage, upload, versioning, sharing, previews and organization. Attached to groups and projects.</label>
-                    <label class="access">Access File Service <i class="fa-solid fa-arrow-right"></i></label>
+                <div class="access">Access File Service<i class="fa-solid fa-arrow-right"></i></div>
+            </div>
+        </div>
+
+        <div class="service partner">
+            <div class="icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Upcoming</div>
+                    <div class="small">Comming soon.</div>
                 </div>
+                
+                <div class="access">Access<i class="fa-solid fa-arrow-right"></i></div>
+            </div>
+        </div>
+
+        <div class="service settlement">
+            <div class="icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Upcoming</div>
+                    <div class="small">Coming soon.</div>
+                </div>
+                
+                <div class="access">Access<i class="fa-solid fa-arrow-right"></i></div>
+            </div>
+        </div>
+
+        <div class="service group">
+            <div class="icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Upcoming</div>
+                    <div class="small">Coming soon.</div>
+                </div>
+                
+                <div class="access">Access<i class="fa-solid fa-arrow-right"></i></div>
+            </div>
+        </div>
+
+        <div class="service catalog">
+            <div class="icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Upcoming</div>
+                    <div class="small">Coming soon.</div>
+                </div>
+                
+                <div class="access">Access<i class="fa-solid fa-arrow-right"></i></div>
+            </div>
+        </div>
+
+        <div class="service integrations">
+            <div class="icon">
+                <i class="fa-solid fa-circle-question"></i>
+            </div>
+            
+            <div class="content">
+                <div class='labels'>
+                    <div class="large">Upcoming</div>
+                    <div class="small">Coming soon.</div>
+                </div>
+                
+                <div class="access">Access<i class="fa-solid fa-arrow-right"></i></div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="footer" id="footer">
-        <div class="labels">
-            <label>© 2024 Proman Micro-Services</label>
-            <label>•</label>
-            <label>All rights reserved.</label>
-        </div>
-
-        <div class="buttons">
-            <button>Privacy Policy</button>
-            <label>•</label>
-            <button>Terms of Service</button>
-            <label>•</label>
-            <button>Contact Us</button>
-            <label>•</label>
-            <button>Help Center</button>
-        </div>
-
-        <label class="label">Proman Micro-Services is a modern collaborative platform built with independent microservices. Our mission is to help teams stay organized, productive, and connected — no matter the size.</label>
-
-        <div class="labels">
-            <label>Built with passion</label>
-            <label>•</label>
-            <label>Designed for clarity</label>
-            <label>•</label>
-            <label>Powered by scalable architecture</label>
-        </div>
+<div class="footer" id="footer">
+    <div class="labels">
+        <label>© Homecare One Services</label>
+        <label>•</label>
+        <label>All rights reserved.</label>
     </div>
+
+    <div class="buttons">
+        <button>Privacy Policy</button>
+        <label>•</label>
+        <button>Terms of Service</button>
+        <label>•</label>
+        <button>Contact Us</button>
+        <label>•</label>
+        <button>Help Center</button>
+    </div>
+
+    <label class="label">Homecare One Services is a comprehensive care operations platform - built to simplify the way homecare providers manage clients, partners, and services.</label>
+
+    <div class="labels">
+        <label>Built for caregivers</label>
+        <label>•</label>
+        <label>Designed for clarity</label>
+        <label>•</label>
+        <label>Trusted by partners</label>
+    </div>
+</div>
 </body>
 
 <script>
